@@ -17,7 +17,7 @@ jobs:
       run: |
         python -m venv venv
         source venv/bin/activate
-        pip install -r requirements.txt
+        pip install -r api/requirements.txt
 
     - name: Zip the codebase
       run: zip -r deployment-package.zip . -x '*.git*'
