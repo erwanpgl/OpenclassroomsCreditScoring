@@ -3,7 +3,10 @@ import pandas as pd
 import gc
 import time
 from contextlib import contextmanager
+import os
 
+csv_names = os.getenv('CSV_NAMES', '')
+print(csv_names)
 
 #Load Dataframes
 path = "C:\\Users\\erwan\\openclassroomsRessources\\projet7\\Projet+Mise+en+prod+-+home-credit-default-risk\\"

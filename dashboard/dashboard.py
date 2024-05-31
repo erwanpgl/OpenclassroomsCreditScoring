@@ -5,11 +5,14 @@ import json
 import shap
 import pickle
 import time
-import matplotlib 
+
 
 #%matplotlib inline
 
 #matplotlib.use('Qt5Agg')
+
+import matplotlib 
+matplotlib.use('TkAgg')
 # print the JS visualization code to the notebook
 shap.initjs()
 
