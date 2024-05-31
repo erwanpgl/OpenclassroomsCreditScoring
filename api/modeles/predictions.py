@@ -1,13 +1,13 @@
 import numpy as np
 import pandas as pd
 import pickle
-from modeles.preprocesser import featurePreprocessing
+from api.modeles.preprocesser import featurePreprocessing
 import json
 import time
 import os
 
 
-path_lightgbm = os.getcwd() + '\\modeles\\model_lightgbm.pkl'
+path_lightgbm = os.getcwd() + '\\api\\modeles\\model_lightgbm.pkl'
 
 path_model = path_lightgbm
 
