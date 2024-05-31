@@ -26,7 +26,7 @@ jobs:
         
     - name: Run tests
       env:
-        PYTHONPATH: ${{api}}  # Ensure the root directory is in PYTHONPATH
+        #PYTHONPATH: ${{ github.workspace }}  # Ensure the root directory is in PYTHONPATH
       run: |
         source venv/bin/activate
         pytest
