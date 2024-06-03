@@ -8,10 +8,15 @@ import os
 csv_names = os.getenv('CSV_NAMES', '')
 print(csv_names)
 
-#Load Dataframes
-path = "C:\\Users\\erwan\\openclassroomsRessources\\projet7\\Projet+Mise+en+prod+-+home-credit-default-risk\\"
-    
-reduce_size = False #used for deploying on api site where there is a size limit
+if os.getenv('PA_USERNAME'): #case deployed on pythonanywhere
+    server_path_modeles = "\\mysite\\"
+    server_path_files = "\\mysite\\"
+    reduce_size = True #used for deploying on api site where there is a size limit
+else:
+    server_path_modeles = "\\api\\modeles\\"
+    server_path_files = "C:\\Users\\erwan\\openclassroomsRessources\\projet7\\Projet+Mise+en+prod+-+home-credit-default-risk\\"
+    reduce_size = False #used for deploying on api site where there is a size limit   
+
 num_rows = None
 
 path_bureau = "bureau" + ("_reduced" if reduce_size else "") + ".csv"
@@ -21,17 +26,17 @@ path_pos_cash = "POS_CASH_balance" + ("_reduced" if reduce_size else "") + ".csv
 path_installments = "installments_payments" + ("_reduced" if reduce_size else "") + ".csv"
 path_cc = "credit_card_balance" + ("_reduced" if reduce_size else "") + ".csv"
     
-bureau_df = pd.read_csv(path + path_bureau, nrows = num_rows)
+bureau_df = pd.read_csv(server_path_files + path_bureau, nrows = num_rows)
 print("bureau shape: " + str(bureau_df.shape))
-bb_df = pd.read_csv(path + path_bb, nrows = num_rows)
+bb_df = pd.read_csv(server_path_files + path_bb, nrows = num_rows)
 print("bureau_balance shape: " + str(bb_df.shape))
-prev_app_df = pd.read_csv(path + path_prev_app, nrows = num_rows)
+prev_app_df = pd.read_csv(server_path_files + path_prev_app, nrows = num_rows)
 print("previous_application shape: " + str(prev_app_df.shape))
-pos_cash_df = pd.read_csv(path + path_pos_cash, nrows = num_rows)
+pos_cash_df = pd.read_csv(server_path_files + path_pos_cash, nrows = num_rows)
 print("POS_CASH_balance shape: " + str(pos_cash_df.shape))
-installments_df =  pd.read_csv(path + path_installments, nrows = num_rows)
+installments_df =  pd.read_csv(server_path_files + path_installments, nrows = num_rows)
 print("installments_payments shape: " + str(installments_df.shape))
-cc_df = pd.read_csv(path + path_cc, nrows = num_rows)
+cc_df = pd.read_csv(server_path_files + path_cc, nrows = num_rows)
 print("credit_card_balance shape: " + str(cc_df.shape))
 
 @contextmanager
