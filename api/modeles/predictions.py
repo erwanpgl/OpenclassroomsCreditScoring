@@ -1,17 +1,19 @@
 import numpy as np
 import pandas as pd
 import pickle
-from api.modeles.preprocesser import featurePreprocessing
+#from api.modeles.preprocesser import featurePreprocessing
+from modeles.preprocesser import featurePreprocessing
 import json
 import time
 import os
 
-if os.getenv('PA_USERNAME'): #case deployed on pythonanywhere
-    server_path_modeles = "\\mysite\\"
-    server_path_files = "\\mysite\\"
+print (os.getenv('PA_USERNAME'))
+if os.getenv('PA_USERNAME') != "": #case deployed on pythonanywhere
+    server_path_modeles = "/mysite/modeles/"
+    server_path_files = "/mysite/"
 else:
-    server_path_modeles = "\\api\\modeles\\"
-    server_path_files = "C:\\Users\\erwan\\openclassroomsRessources\\projet7\\Projet+Mise+en+prod+-+home-credit-default-risk\\"
+    server_path_modeles = "/api/modeles/"
+    server_path_files = "C:/Users/erwan/openclassroomsRessources/projet7/Projet+Mise+en+prod+-+home-credit-default-risk/"
 
 path_lightgbm = server_path_modeles + 'model_lightgbm.pkl'
 

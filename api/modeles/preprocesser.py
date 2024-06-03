@@ -7,14 +7,15 @@ import os
 
 csv_names = os.getenv('CSV_NAMES', '')
 print(csv_names)
+print (os.getenv('PA_USERNAME'))
 
-if os.getenv('PA_USERNAME'): #case deployed on pythonanywhere
-    server_path_modeles = "\\mysite\\"
-    server_path_files = "\\mysite\\"
+if os.getenv('PA_USERNAME') != "": #case deployed on pythonanywhere
+    server_path_modeles = "/mysite/modeles/"
+    server_path_files = "/mysite/"
     reduce_size = True #used for deploying on api site where there is a size limit
 else:
-    server_path_modeles = "\\api\\modeles\\"
-    server_path_files = "C:\\Users\\erwan\\openclassroomsRessources\\projet7\\Projet+Mise+en+prod+-+home-credit-default-risk\\"
+    server_path_modeles = "/api/modeles/"
+    server_path_files = "C:/Users/erwan/openclassroomsRessources/projet7/Projet+Mise+en+prod+-+home-credit-default-risk/"
     reduce_size = False #used for deploying on api site where there is a size limit   
 
 num_rows = None
