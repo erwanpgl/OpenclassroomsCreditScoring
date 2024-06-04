@@ -11,11 +11,11 @@ print (os.getenv('CSV_NAMES'))
 
 if os.getenv('CSV_NAMES') == "reduced_for_tests": #tests launched by github
     server_path_modeles = "api/modeles/"
-    server_path_files = "api/fichiers_csv"
+    server_path_files = "api/fichiers_csv/"
     files_name_end = "_4tests"
 elif os.getenv('PYTHONANYWHERE_DOMAIN') == "pythonanywhere.com": #case deployed on pythonanywhere =
     server_path_modeles = "mysite/"
-    server_path_files = "mysite/fichiers_csv"
+    server_path_files = "mysite/fichiers_csv/"
     files_name_end = "_production"
 else: #local
     server_path_modeles = "api/modeles/"
