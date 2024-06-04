@@ -1,9 +1,7 @@
 import numpy as np
 import pandas as pd
 import pickle
-#from api.modeles.preprocesser import featurePreprocessing
-from modeles.preprocesser import featurePreprocessing
-import json
+from api.modeles.preprocesser import featurePreprocessing
 import time
 import os
 
