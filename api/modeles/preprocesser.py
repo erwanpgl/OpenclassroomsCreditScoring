@@ -155,6 +155,9 @@ def bureau_and_balance(nan_as_category = True):
 # Preprocess previous_applications.csv
 def previous_applications(nan_as_category = True):
     prev, cat_cols = one_hot_encoder(prev_app_df, nan_as_category= True)
+    #fix for tests some status don't exist need to add
+    if not 'NAME_CONTRACT_STATUS_Refused' in prev.columns:
+        prev['NAME_CONTRACT_STATUS_Refused'] = 0
     # gestion Outlier : Days 365.243 values -> nan
     prev['DAYS_FIRST_DRAWING'] = prev['DAYS_FIRST_DRAWING'].replace(365243, np.nan)
     prev['DAYS_FIRST_DUE'] = prev['DAYS_FIRST_DUE'].replace(365243, np.nan)
@@ -188,7 +191,7 @@ def previous_applications(nan_as_category = True):
     approved_agg = approved.groupby('SK_ID_CURR').agg(num_aggregations)
     approved_agg.columns = pd.Index(['APPROVED_' + e[0] + "_" + e[1].upper() for e in approved_agg.columns.tolist()])
     prev_agg = prev_agg.join(approved_agg, how='left', on='SK_ID_CURR')
-    # Previous Applications: Refused Applications - only numerical features
+    # Previous Applications: Refused Applications - only numerical features    
     refused = prev[prev['NAME_CONTRACT_STATUS_Refused'] == 1]
     refused_agg = refused.groupby('SK_ID_CURR').agg(num_aggregations)
     refused_agg.columns = pd.Index(['REFUSED_' + e[0] + "_" + e[1].upper() for e in refused_agg.columns.tolist()])
