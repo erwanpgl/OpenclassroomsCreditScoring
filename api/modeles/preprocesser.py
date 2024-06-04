@@ -10,8 +10,8 @@ print (os.getenv('PYTHONANYWHERE_DOMAIN'))
 print (os.getenv('CSV_NAMES'))
 
 if os.getenv('CSV_NAMES') == "reduced_for_tests": #tests launched by github
-    server_path_modeles = "mysite/"
-    server_path_files = "mysite/fichiers_csv"
+    server_path_modeles = "api/modeles/"
+    server_path_files = "api/fichiers_csv"
     files_name_end = "_4tests"
 elif os.getenv('PYTHONANYWHERE_DOMAIN') == "pythonanywhere.com": #case deployed on pythonanywhere =
     server_path_modeles = "mysite/"
@@ -31,6 +31,8 @@ path_pos_cash = "POS_CASH_balance" + files_name_end + ".csv"
 path_installments = "installments_payments" + files_name_end + ".csv"
 path_cc = "credit_card_balance" + files_name_end + ".csv"
     
+print(os.listdir())
+
 bureau_df = pd.read_csv(server_path_files + path_bureau, nrows = num_rows)
 print("bureau shape: " + str(bureau_df.shape))
 bb_df = pd.read_csv(server_path_files + path_bb, nrows = num_rows)
