@@ -8,17 +8,28 @@ import time
 import os
 
 print (os.getenv('PA_USERNAME'))
-if os.getenv('PA_USERNAME') != "": #case deployed on pythonanywhere
-    server_path_modeles = "/mysite/modeles/"
-    server_path_files = "/mysite/"
-else:
-    server_path_modeles = "/api/modeles/"
+print (os.getenv('PYTHONANYWHERE_DOMAIN'))
+print (os.getenv('CSV_NAMES'))
+
+if os.getenv('CSV_NAMES') == "reduced_for_tests": #tests launched by github
+    server_path_modeles = "mysite/"
+    server_path_files = "mysite/fichiers_csv"
+    files_name_end = "_4tests"
+elif os.getenv('PYTHONANYWHERE_DOMAIN') == "pythonanywhere.com": #case deployed on pythonanywhere =
+    server_path_modeles = "mysite/"
+    server_path_files = "mysite/fichiers_csv"
+    files_name_end = "_production"
+else: #local
+    server_path_modeles = "api/modeles/"
     server_path_files = "C:/Users/erwan/openclassroomsRessources/projet7/Projet+Mise+en+prod+-+home-credit-default-risk/"
+    files_name_end = ""
 
 path_lightgbm = server_path_modeles + 'model_lightgbm.pkl'
 
 path_model = path_lightgbm
 
+print(os.listdir(os.curdir))
+print(path_model)
 # Load pipeline and model using the binary files
 model = pickle.load(open(path_model, 'rb'))
 #pipeline = pickle.load(open('pipeline.pkl', 'rb'))
@@ -26,7 +37,7 @@ model = pickle.load(open(path_model, 'rb'))
 #load data and calls preprocessing
 #reduce_size = False #used for deploying on api site where there is a size limit
 num_rows = None
-path_application = server_path_files + "application_train.csv"
+path_application = server_path_files + "application_train" +  files_name_end +  ".csv"
 df = pd.read_csv(path_application, nrows = num_rows)
 
 print("application_train shape: " + str(df.shape) )

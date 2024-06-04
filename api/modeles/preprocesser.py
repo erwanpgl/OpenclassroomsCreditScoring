@@ -5,27 +5,31 @@ import time
 from contextlib import contextmanager
 import os
 
-csv_names = os.getenv('CSV_NAMES', '')
-print(csv_names)
 print (os.getenv('PA_USERNAME'))
+print (os.getenv('PYTHONANYWHERE_DOMAIN'))
+print (os.getenv('CSV_NAMES'))
 
-if os.getenv('PA_USERNAME') != "": #case deployed on pythonanywhere
-    server_path_modeles = "/mysite/modeles/"
-    server_path_files = "/mysite/"
-    reduce_size = True #used for deploying on api site where there is a size limit
-else:
-    server_path_modeles = "/api/modeles/"
+if os.getenv('CSV_NAMES') == "reduced_for_tests": #tests launched by github
+    server_path_modeles = "mysite/"
+    server_path_files = "mysite/fichiers_csv"
+    files_name_end = "_4tests"
+elif os.getenv('PYTHONANYWHERE_DOMAIN') == "pythonanywhere.com": #case deployed on pythonanywhere =
+    server_path_modeles = "mysite/"
+    server_path_files = "mysite/fichiers_csv"
+    files_name_end = "_production"
+else: #local
+    server_path_modeles = "api/modeles/"
     server_path_files = "C:/Users/erwan/openclassroomsRessources/projet7/Projet+Mise+en+prod+-+home-credit-default-risk/"
-    reduce_size = False #used for deploying on api site where there is a size limit   
+    files_name_end = ""
 
 num_rows = None
 
-path_bureau = "bureau" + ("_reduced" if reduce_size else "") + ".csv"
-path_bb = "bureau_balance" + ("_reduced" if reduce_size else "") + ".csv"
-path_prev_app = "previous_application" + ("_reduced" if reduce_size else "") + ".csv"
-path_pos_cash = "POS_CASH_balance" + ("_reduced" if reduce_size else "") + ".csv"
-path_installments = "installments_payments" + ("_reduced" if reduce_size else "") + ".csv"
-path_cc = "credit_card_balance" + ("_reduced" if reduce_size else "") + ".csv"
+path_bureau = "bureau" + files_name_end + ".csv"
+path_bb = "bureau_balance" + files_name_end + ".csv"
+path_prev_app = "previous_application" + files_name_end + ".csv"
+path_pos_cash = "POS_CASH_balance" + files_name_end + ".csv"
+path_installments = "installments_payments" + files_name_end + ".csv"
+path_cc = "credit_card_balance" + files_name_end + ".csv"
     
 bureau_df = pd.read_csv(server_path_files + path_bureau, nrows = num_rows)
 print("bureau shape: " + str(bureau_df.shape))

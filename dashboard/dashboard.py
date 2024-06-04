@@ -65,7 +65,8 @@ def request_prediction(model_uri, data):
 
 
 def main():
-    API_URI =  'http://erwanpgl.pythonanywhere.com/predict'# 'http://127.0.0.1:5000/predict'
+    API_URI =  'http://127.0.0.1:5000/predict'
+    #API_URI = 'http://erwanpgl.pythonanywhere.com/predict'
     #CORTEX_URI = 'http://0.0.0.0:8890/'
     #RAY_SERVE_URI = 'http://127.0.0.1:8000/regressor'
 
@@ -116,16 +117,14 @@ def main():
 
                 st.markdown(message_resultat) 
                 
-                explain_btn = st.button("Caractéristiques ayant influencé la prédiction:")
-                if explain_btn:
+                def displayshap():
+                    shap.plots.waterfall(shap_values[0])
+
+                explain_btn = st.button("Caractéristiques ayant influencé la prédiction:", on_click=displayshap)
+               
                  #st.subheader("Caractéristiques ayant influencé la prédiction:")
-
-                #shap_values = API_data['shap_values']   
-
                 #shap.waterfall_plot(shap_values)  
 
-                    shap.plots.waterfall(shap_values[0])
-            
         except Exception as e:
             print("An exception occurred: {}".format(e)) #.args[0]
             st.markdown(e) 
