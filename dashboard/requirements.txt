@@ -1,0 +1,2 @@
+shap==0.45.1
+streamlit-shap==1.0.2
