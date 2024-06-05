@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pickle
-from api.modeles.preprocesser import featurePreprocessing
+from modeles.preprocesser import featurePreprocessing
 import time
 import os
 
@@ -14,13 +14,16 @@ if os.getenv('CSV_NAMES') == "reduced_for_tests": #tests launched by github
     server_path_files = "api/fichiers_csv/"
     files_name_end = "_4tests"
 elif os.getenv('PYTHONANYWHERE_DOMAIN') == "pythonanywhere.com": #case deployed on pythonanywhere =
-    server_path_modeles = "mysite/"
-    server_path_files = "mysite/fichiers_csv/"
+    server_path_modeles = "mysite/api/modeles/"
+    server_path_files = "mysite/api/fichiers_csv/"
     files_name_end = "_production"
 else: #local
     server_path_modeles = "api/modeles/"
     server_path_files = "C:/Users/erwan/openclassroomsRessources/projet7/Projet+Mise+en+prod+-+home-credit-default-risk/"
     files_name_end = ""
+
+print(os.listdir())
+print(server_path_modeles)
 
 path_lightgbm = server_path_modeles + 'model_lightgbm.pkl'
 
@@ -28,6 +31,7 @@ path_model = path_lightgbm
 
 print(os.listdir(os.curdir))
 print(path_model)
+os.environ['OMP_NUM_THREADS'] = '1'
 # Load pipeline and model using the binary files
 model = pickle.load(open(path_model, 'rb'))
 #pipeline = pickle.load(open('pipeline.pkl', 'rb'))
@@ -56,6 +60,7 @@ def predict(id):
     
     #prediction = model.predict(X) 
     time_debut = time.time()
+    print("avant prédiction")
     proba = model.predict_proba(X)
     print('{}, temps écoulé: {} s'.format('prédictions', time.time() - time_debut))
 

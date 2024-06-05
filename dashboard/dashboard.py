@@ -1,29 +1,31 @@
 import pandas as pd
 import streamlit as st
+from streamlit_shap import st_shap
 import requests
 import json
 import shap
 import pickle
 import time
+import matplotlib
+import matplotlib.pyplot as plt
+#only on jupyter notebook: %matplotlib inline
+#matplotlib.use('Qt5Agg') -> error
 
-
-#%matplotlib inline
-
-#matplotlib.use('Qt5Agg')
-
-import matplotlib 
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg')
 # print the JS visualization code to the notebook
-shap.initjs()
+#shap.initjs()
 
-path = "C:\\Users\\erwan\\openclassroomsRessources\\projet7\\Projet+Mise+en+prod+-+home-credit-default-risk\\"
+#for dev full size: path_application  = "C:\\Users\\erwan\\openclassroomsRessources\\projet7\\Projet+Mise+en+prod+-+home-credit-default-risk\\application_train.csv"
 
-reduce_size = False #used for deploying on api site where there is a size limit
 num_rows = None
 
-path_application = path + "application_train" + ("_reduced" if reduce_size else "") + ".csv"
+#for prod pythinanywhere reduced size
+path_application =  "application_train_reduced_4pythonanaywhere.csv"
 
-path_lightgbm = 'C:\\Users\\erwan\\projet7_modele_scoring\\credit_scoring\\api\\modeles\\model_lightgbm.pkl'
+#for dev path_lightgbm = 'C:\\Users\\erwan\\projet7_modele_scoring\\credit_scoring\\api\\modeles\\model_lightgbm.pkl'
+#for prod on pythonanywhere trained on reduced feataures because reduced data (kernel with all csv and feature enginneering) 
+path_lightgbm = 'model_lightgbm_reduced_4pythonanaywhere.pkl'
+
 path_model = path_lightgbm
 
 @st.cache_data
@@ -65,11 +67,11 @@ def request_prediction(model_uri, data):
 
 
 def main():
-    API_URI =  'http://127.0.0.1:5000/predict'
-    #API_URI = 'http://erwanpgl.pythonanywhere.com/predict'
+    #API_URI =  'http://127.0.0.1:5000/predict'
+    API_URI = 'http://erwanpgl.pythonanywhere.com/predict'
     #CORTEX_URI = 'http://0.0.0.0:8890/'
     #RAY_SERVE_URI = 'http://127.0.0.1:8000/regressor'
-
+    
     st.title('Credit Solvabilité Prediction')
 
     id_client = st.selectbox(
@@ -118,12 +120,20 @@ def main():
                 st.markdown(message_resultat) 
                 
                 def displayshap():
-                    shap.plots.waterfall(shap_values[0])
+                    matplotlib.use('TkAgg')
+                    shap.plots.waterfall(shap_values[0], max_display=10)
+                    plt.show()
 
                 explain_btn = st.button("Caractéristiques ayant influencé la prédiction:", on_click=displayshap)
                
-                 #st.subheader("Caractéristiques ayant influencé la prédiction:")
-                #shap.waterfall_plot(shap_values)  
+                st.subheader("Caractéristiques ayant influencé la prédiction:")
+                #no module plptly st.plotly_chart(shap.plots.waterfall(shap_values[0]))
+                #st_shap(shap.plots.waterfall(shap_values[0]), width= 1600,  height=600)
+                #shap.initjs()
+                #fig = plt.figure(figsize=(10, 6))  # Adjust the figure size as needed
+                st_shap(shap.plots.waterfall(shap_values[0], max_display=10), width= 900,  height=600)
+                #shap.plots.waterfall(shap_values[0], max_display=10)  # Customize max_display if desired
+                #st.pyplot(fig)
 
         except Exception as e:
             print("An exception occurred: {}".format(e)) #.args[0]
