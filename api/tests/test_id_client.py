@@ -1,4 +1,4 @@
-from api.modeles.predictions import predict
+from modeles.predictions import predict
 
 def test_idclient_invalid():
   try:
