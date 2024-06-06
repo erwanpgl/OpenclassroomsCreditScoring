@@ -8,6 +8,7 @@ import pickle
 import time
 import matplotlib
 import matplotlib.pyplot as plt
+import os
 #only on jupyter notebook: %matplotlib inline
 #matplotlib.use('Qt5Agg') -> error
 
@@ -20,11 +21,11 @@ import matplotlib.pyplot as plt
 num_rows = None
 
 #for prod pythinanywhere reduced size
-path_application =  "application_train_reduced_4pythonanaywhere.csv"
+path_application =  "dashboard/application_train_reduced_4pythonanaywhere.csv"
 
 #for dev path_lightgbm = 'C:\\Users\\erwan\\projet7_modele_scoring\\credit_scoring\\api\\modeles\\model_lightgbm.pkl'
 #for prod on pythonanywhere trained on reduced feataures because reduced data (kernel with all csv and feature enginneering) 
-path_lightgbm = 'model_lightgbm_reduced_4pythonanaywhere.pkl'
+path_lightgbm = 'dashboard/model_lightgbm_reduced_4pythonanaywhere.pkl'
 
 path_model = path_lightgbm
 
@@ -43,7 +44,7 @@ def chargement_liste_clients(nrows = num_rows):
     liste_clients = df['SK_ID_CURR'].unique()   
     return liste_clients
 
-liste_clients = chargement_liste_clients( num_rows)
+liste_clients = chargement_liste_clients( num_rows) #[5, 2.5, 1.75, 0.15] #
 
 explainer = chargement_shap_explainer()
 
@@ -72,6 +73,8 @@ def main():
     #CORTEX_URI = 'http://0.0.0.0:8890/'
     #RAY_SERVE_URI = 'http://127.0.0.1:8000/regressor'
     
+    #st.text(os.listdir()) useful for infos on server's when deployed
+
     st.title('Credit Solvabilité Prediction')
 
     id_client = st.selectbox(
