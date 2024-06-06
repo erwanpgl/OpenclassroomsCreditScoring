@@ -8,6 +8,7 @@ import pickle
 import time
 import matplotlib
 import matplotlib.pyplot as plt
+import os
 #only on jupyter notebook: %matplotlib inline
 #matplotlib.use('Qt5Agg') -> error
 
@@ -43,9 +44,9 @@ def chargement_liste_clients(nrows = num_rows):
     liste_clients = df['SK_ID_CURR'].unique()   
     return liste_clients
 
-liste_clients = chargement_liste_clients( num_rows)
+liste_clients = [5, 2.5, 1.75, 0.15] #chargement_liste_clients( num_rows)
 
-explainer = chargement_shap_explainer()
+#explainer = chargement_shap_explainer()
 
 
 
@@ -72,6 +73,10 @@ def main():
     #CORTEX_URI = 'http://0.0.0.0:8890/'
     #RAY_SERVE_URI = 'http://127.0.0.1:8000/regressor'
     
+    st.text(os.curdir)
+    st.text(os.path)
+    st.text(os.listdir())
+
     st.title('Credit Solvabilité Prediction')
 
     id_client = st.selectbox(
