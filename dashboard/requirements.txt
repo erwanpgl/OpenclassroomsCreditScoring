@@ -1,3 +1,4 @@
 matplotlib==3.8.4
 shap==0.45.1
 streamlit-shap==1.0.2
+lightgbm==4.3.0
