@@ -8,7 +8,7 @@ import pickle
 import time
 import matplotlib
 import matplotlib.pyplot as plt
-import os
+#import os
 #only on jupyter notebook: %matplotlib inline
 #matplotlib.use('Qt5Agg') -> error
 
@@ -47,8 +47,6 @@ def chargement_liste_clients(nrows = num_rows):
 liste_clients = chargement_liste_clients( num_rows) #[5, 2.5, 1.75, 0.15] #
 
 explainer = chargement_shap_explainer()
-
-
 
 def request_prediction(model_uri, data):
     headers = {"Content-Type": "application/json"}
