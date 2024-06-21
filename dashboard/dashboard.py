@@ -17,7 +17,7 @@ import base64
 
 #matplotlib.use('TkAgg')
 # print the JS visualization code to the notebook
-shap.initjs()
+#shap.initjs()
 
 #for dev full size: path_application  = "C:\\Users\\erwan\\openclassroomsRessources\\projet7\\Projet+Mise+en+prod+-+home-credit-default-risk\\application_train.csv"
 print (os.getcwd())
@@ -31,21 +31,6 @@ if "dashboard" in(os.listdir()): #used when deployed
 #for prod pythinanywhere reduced size
 path_application =  path + "application_train_reduced_4pythonanaywhere.csv"
 
-#for dev path_lightgbm = 'C:\\Users\\erwan\\projet7_modele_scoring\\credit_scoring\\api\\modeles\\model_lightgbm.pkl'
-#for prod on pythonanywhere trained on reduced feataures because reduced data (kernel with all csv and feature enginneering) 
-path_lightgbm = path + 'model_lightgbm_reduced_4pythonanaywhere.pkl'
-
-path_model = path_lightgbm
-
-@st.cache_data
-def chargement_shap_explainer():
-    # Load pipeline and model using the binary files
-    model = pickle.load(open(path_model, 'rb'))
-    #shap explainer
-    explainer = shap.TreeExplainer(model)
-    return explainer
-
-
 @st.cache_data#mise en cache de la fonction pour exécution unique -> utiliser si utile
 def chargement_liste_clients(nrows = num_rows):   
     df = pd.read_csv(path_application, nrows = num_rows)
@@ -54,7 +39,6 @@ def chargement_liste_clients(nrows = num_rows):
 
 liste_clients = chargement_liste_clients( num_rows) 
 
-explainer = chargement_shap_explainer()
 
 def request_prediction(model_uri, data):
     headers = {"Content-Type": "application/json"}
@@ -98,10 +82,8 @@ set_background('./images/pret_a_depenser.png')
 
 
 def main():
-    #API_URI =  'http://127.0.0.1:5000/predict'
+    
     API_URI = 'http://erwanpgl.pythonanywhere.com/predict'
-    #CORTEX_URI = 'http://0.0.0.0:8890/'
-    #RAY_SERVE_URI = 'http://127.0.0.1:8000/regressor'
     
     #st.text(os.listdir()) useful for infos on server's when deployed
 
@@ -111,13 +93,7 @@ def main():
     #st.image(image)             
     id_client = st.selectbox(
     "Veuillez sélectionner le client",
-    liste_clients)
-
-    #id_client = st.number_input('Id client', value=215354., step=1.)
-
-    #CODE_GENDER= st.sidebar.selectbox(
-    #    'Genre',
-    #    ['M', 'F'])
+    liste_clients)    
 
     
     predict_btn = st.button('Prédire')
@@ -133,9 +109,7 @@ def main():
                 API_data = json.loads(pred)
 
                 # Calculates the SHAP values - It takes some time
-                time_debut = time.time()
-                features_values = pd.read_json(API_data['features_values'])
-                shap_values = explainer(features_values,)                
+                time_debut = time.time()       
                 
                 print('{}, temps écoulé: {} s'.format('analyse shap', time.time() - time_debut))
         
@@ -152,36 +126,7 @@ def main():
                 #classe_reelle = str(classe_reelle).replace('0', 'sans défaut').replace('1', 'avec défaut')
                 message_resultat = 'Prédiction : **' + etat +  '** avec **' + str(round(prediction*100)) + '%** de risque de défaut' # (classe réelle : '+str(classe_reelle) + ')'   
 
-                st.markdown(message_resultat) 
-                
-                def displayshap():
-                    matplotlib.use('TkAgg')
-                    shap.plots.waterfall(shap_values[0],features_values.columns.names, max_display=10)
-                    plt.show()
-
-                #explain_btn = st.button("Caractéristiques ayant influencé la prédiction:", on_click=displayshap)
-               
-                #st.subheader("Caractéristiques ayant influencé la prédiction:", )
-                #no module plptly st.plotly_chart(shap.plots.waterfall(shap_values[0]))
-                #st_shap(shap.plots.waterfall(shap_values[0]), width= 1600,  height=600)
-                #shap.initjs()
-                #fig = plt.figure(figsize=(10, 6))  # Adjust the figure size as needed
-                                
-                #fig = shap.plots.waterfall(shap_values[0,:],  max_display=10)
-
-                #st_shap(shap.bar_plot(shap_values[0], feature_names=features_values.columns.names, max_display=10)
-                #fig = shap.plots.force(shap_values[0])
-                #fig = shap.plots.bar(shap_values[0,:],  max_display=10)
-                #st_shap(fig)# , width= 1200,  height=600)
-
-                #a tester, avec appel par button               
-                #plt.savefig("output.jpg") 
-                
-                #shap.plots.waterfall(shap_values[0], max_display=10)  # Customize max_display if desired
-                #st.pyplot(fig)
-
-                #shap.summary_plot(shap_values, X, plot_size=[8,6])
-
+                st.markdown(message_resultat)                 
 
         except Exception as e:
             print("An exception occurred: {}".format(e)) #.args[0]
