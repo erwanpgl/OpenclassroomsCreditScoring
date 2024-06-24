@@ -83,7 +83,7 @@ set_background(path + 'images/pret_a_depenser.png')
 
 def main():
     
-    API_URI = "http://127.0.0.1:5000/predict" # 'http://erwanpgl.pythonanywhere.com/predict'
+    API_URI = 'http://erwanpgl.pythonanywhere.com/predict' #"http://127.0.0.1:5000/predict" 
     
     #st.text(os.listdir()) useful for infos on server's when deployed
 
