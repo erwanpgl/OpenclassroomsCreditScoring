@@ -83,7 +83,7 @@ set_background(path + 'images/pret_a_depenser.png')
 
 def main():
     
-    API_URI = 'http://erwanpgl.pythonanywhere.com/predict'
+    API_URI = "http://127.0.0.1:5000/predict" # 'http://erwanpgl.pythonanywhere.com/predict'
     
     #st.text(os.listdir()) useful for infos on server's when deployed
 
@@ -124,7 +124,7 @@ def main():
                 prediction = API_data['proba_defaut']
                 #classe_reelle = dataframe[dataframe['SK_ID_CURR']==int(id_input)]['LABELS'].values[0]
                 #classe_reelle = str(classe_reelle).replace('0', 'sans défaut').replace('1', 'avec défaut')
-                message_resultat = 'Prédiction : **' + etat +  '** avec **' + str(round(prediction*100)) + '%** de risque de défaut' # (classe réelle : '+str(classe_reelle) + ')'   
+                message_resultat = 'Prédiction : **' + etat +  '** avec **' + str(round(prediction*100,2)) + '%** de risque de défaut' # (classe réelle : '+str(classe_reelle) + ')'   
 
                 st.markdown(message_resultat)                 
 

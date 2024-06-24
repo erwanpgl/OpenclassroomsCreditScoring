@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pickle
-from modeles.preprocesser import featurePreprocessing
+#from modeles.preprocesser import featurePreprocessing
 import time
 import os
 
@@ -39,12 +39,12 @@ model = pickle.load(open(path_model, 'rb'))
 #load data and calls preprocessing
 #reduce_size = False #used for deploying on api site where there is a size limit
 num_rows = None
-path_application = server_path_files + "application_train" +  files_name_end +  ".csv"
+path_application = server_path_files + "application_train_feature_engineered.csv"
 df = pd.read_csv(path_application, nrows = num_rows)
 
 print("application_train shape: " + str(df.shape) )
 
-df = featurePreprocessing(df)
+## featurePreprocessing done locally df = featurePreprocessing(df)
 
 
 print('fin du preprocessing et de la preparation shap')
@@ -56,7 +56,7 @@ def predict(id):
     renvoie la prédiction à partir du modèle'''
     
     X = df[df['SK_ID_CURR'] == id]
-    X = X.drop(['TARGET','SK_ID_CURR'], axis=1)
+    X = X.drop(['TARGET','SK_ID_CURR'], axis=1).to_numpy()
     
     #prediction = model.predict(X) 
     time_debut = time.time()
@@ -70,9 +70,9 @@ def predict(id):
     print('{}, temps écoulé: {} s'.format('analyse shap', time.time() - time_debut)) """       
 
     if proba[0][0] > 0.5:
-        return 0, proba, X #shap_values[0] (shap not jsonified)
+        return 0, proba #shap_values[0] (shap not jsonified)
     else:
-        return 1, proba, X #shap_values[0]
+        return 1, proba #shap_values[0]
 
     #return prediction, proba
     
