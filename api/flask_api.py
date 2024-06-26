@@ -19,11 +19,12 @@ class Preds(Resource):
         
         id_client = int(json_['client_id'])
         
-        prediction, proba = predict(id_client)        #json_data = json.dumps(array.tolist())
+        prediction, proba, top_10_features = predict(id_client)        #json_data = json.dumps(array.tolist())
 
         dict_final = {
         'prediction' : int(prediction),
-        'proba_defaut' : float(proba[0][1])        
+        'proba_defaut' : float(proba[0][1]),
+        'top_10_features' : top_10_features.to_json()     
         }
 
         print('Nouvelle Prédiction : \n', dict_final)

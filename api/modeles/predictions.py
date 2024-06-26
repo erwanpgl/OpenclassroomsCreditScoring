@@ -4,6 +4,7 @@ import pickle
 #from modeles.preprocesser import featurePreprocessing
 import time
 import os
+import shap
 
 print (os.getenv('PA_USERNAME'))
 print (os.getenv('PYTHONANYWHERE_DOMAIN'))
@@ -44,7 +45,11 @@ df = pd.read_csv(path_application, nrows = num_rows)
 
 print("application_train shape: " + str(df.shape) )
 
-## featurePreprocessing done locally df = featurePreprocessing(df)
+# Initialize the SHAP explainer
+X_complet = df.drop(['TARGET','SK_ID_CURR'], axis=1)
+explainer = shap.TreeExplainer(model)
+
+
 
 
 print('fin du preprocessing et de la preparation shap')
@@ -56,7 +61,9 @@ def predict(id):
     renvoie la prédiction à partir du modèle'''
     
     X = df[df['SK_ID_CURR'] == id]
-    X = X.drop(['TARGET','SK_ID_CURR'], axis=1).to_numpy()
+    X = X.drop(['TARGET','SK_ID_CURR'], axis=1)
+    cols = X.columns
+    X= X.to_numpy()
     
     #prediction = model.predict(X) 
     time_debut = time.time()
@@ -64,15 +71,36 @@ def predict(id):
     proba = model.predict_proba(X)
     print('{}, temps écoulé: {} s'.format('prédictions', time.time() - time_debut))
 
-    """ # Calculates the SHAP values - It takes some time
-    time_debut = time.time()
-    shap_values = explainer(X)
-    print('{}, temps écoulé: {} s'.format('analyse shap', time.time() - time_debut)) """       
+    top_10_features = get_10_most_features(X, cols)
 
     if proba[0][0] > 0.5:
-        return 0, proba #shap_values[0] (shap not jsonified)
+        return 0, proba, top_10_features
     else:
-        return 1, proba #shap_values[0]
+        return 1, proba, top_10_features
 
     #return prediction, proba
+    
+def get_10_most_features(X_sample, cols):
+    # Calculates and filter the SHAP values  for 10 most important features
+    time_debut = time.time()
+    # Calculate SHAP values for the single instance
+    shap_values = explainer(X_sample)
+    # Extract SHAP values for the single instance
+    shap_values_single = shap_values.values[0]  # Assuming X_sample has shape (1, n_features)
+    # Create a DataFrame with feature names and their corresponding SHAP values
+    shap_importance_single = pd.DataFrame(list(zip(cols, shap_values_single)),
+                                      columns=['Feature', 'SHAP Value'])
+    # Sort features by the absolute SHAP values
+    shap_importance_single['Abs SHAP Value'] = np.abs(shap_importance_single['SHAP Value'])
+    shap_importance_single_sorted = shap_importance_single.sort_values(by='Abs SHAP Value', ascending=False)
+    # Select the top 10 features
+    top_10_features = shap_importance_single_sorted.head(10)
+    #get feature values for all clients:
+    top_10_features['Mean_all_customers'] = [X_complet[feature].mean() for feature in top_10_features['Feature'].values.tolist()]
+    #clients en règle
+    top_10_features['Mean_all_real_solvable_customers'] = [df[df['TARGET'] == 0][feature].mean() for feature in top_10_features['Feature'].values.tolist()]
+    #clients en règle
+    top_10_features['Mean_all_real_defaut_customers'] = [df[df['TARGET'] == 1][feature].mean() for feature in top_10_features['Feature'].values.tolist()]
+    print('{}, temps écoulé: {} s'.format('analyse shap', time.time() - time_debut)) 
+    return top_10_features
     
