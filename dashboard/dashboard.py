@@ -21,7 +21,14 @@ import plotly.graph_objects as go
 # print the JS visualization code to the notebook
 #shap.initjs()
 
+path = ''
+
+if "dashboard" in(os.listdir()): #used when deployed
+    path = 'dashboard/'
+
 #for dev full size: path_application  = "C:\\Users\\erwan\\openclassroomsRessources\\projet7\\Projet+Mise+en+prod+-+home-credit-default-risk\\application_train.csv"
+st.set_page_config(page_title='Credit Solvabilité Prediction', page_icon=path + 'images/loupe_euro.png')
+
 plt.rcParams.update({'font.size': 30})
 print (os.getcwd())
 num_rows = None
@@ -118,10 +125,14 @@ def graphes_client_top_features(df):
         sns.despine(ax=None, left=True, bottom=True, trim=False)
         
         ax_current = ax[i, j] if (len(ax.shape)==2) else ax[j]            
-                  
+
+        shap_value = df[df['Feature']==feature]['SHAP Value'].values[0]              
+        shap_color = '#FD5656' if shap_value > 0 else '#60FD93'
+
         sns.barplot(y = df[df['Feature']==feature][['Feature Client Value', 'Mean_all_customers', 'Mean_all_real_solvable_customers', 'Mean_all_real_defaut_customers']].values[0],
                     x = liste_cols,
-                    ax= ax_current)
+                    ax= ax_current,
+                    color=shap_color)
         
         sns.axes_style("white")
         
@@ -131,12 +142,12 @@ def graphes_client_top_features(df):
             chaine = feature
         if df[df['Feature']==feature]['SHAP Value'].values[0] > 0:
             chaine += '\n(pénalise la solvabilité)'
-            ax_current.set_facecolor('#FD5656') #contribue négativement ffe3e3
-            ax_current.set_title(chaine, color='#27010A', size=40) #990024
+           # ax_current.set_facecolor('#FD5656') #contribue négativement ffe3e3
+            ax_current.set_title(chaine, size=40) #990024  color='#27010A'
         else:
             chaine += '\n(améliore la solvabilité)'
-            ax_current.set_facecolor('#60FD93') #e3ffec
-            ax_current.set_title(chaine, color='#012E0D', size=40)        #017320
+           # ax_current.set_facecolor('#60FD93') #e3ffec
+            ax_current.set_title(chaine, size=40)        #017320 color='#012E0D'
         if j == 1:
             i+=1
             j=0
@@ -177,14 +188,15 @@ def graphes_global_features(df):
     #plt.xticks(rotation=15)        
     #sns.axes_style("white")     
     plt.yticks(visible=False)
-    plt.legend(labels=['Solvabilité améliorée', 'Solvabilité diminuée'], loc='upper right', fontsize=15)
+    plt.legend(loc='upper right', fontsize=15) #labels=['Solvabilité améliorée', 'Solvabilité diminuée'], 
     return fig
 
 def main():
     
-    API_URI =  'http://erwanpgl.pythonanywhere.com/predict' #"http://127.0.0.1:5000/predict"
+    API_URI =  "http://127.0.0.1:5000/predict" #'http://erwanpgl.pythonanywhere.com/predict'
     
     #st.text(os.listdir()) useful for infos on server's when deployed
+    
 
     st.title('Credit Solvabilité Prediction')
     
@@ -219,9 +231,10 @@ def main():
 
     if st.session_state.API_data != '':
 
-        API_data = st.session_state.API_data
-        prediction_num = round(API_data['proba_defaut']*100,2)
-        prediction = str(round(API_data['proba_defaut']*100,2))
+        API_data = st.session_state.API_data        
+        prediction_num = API_data['proba_defaut']
+        prediction_num_percent = round(prediction_num*100,2)
+        prediction = str(prediction_num_percent)
         #message_resultat = 'Prédiction : **{0}** avec **{1}%** de risque de défaut'
         message_resultat = '{0} avec {1}% de risque de défaut'
 
@@ -238,16 +251,16 @@ def main():
         fig = go.Figure(go.Indicator(
             mode = "number+delta+gauge",
             #gauge = {'shape': "bullet", 'bar.color': 'darkred' if classe_predite == 1 else 'darkgreen', 'threshold.line': 0.1},
-            gauge = {'axis': {'visible': False}, 'bar.color': 'darkred' if classe_predite == 1 else 'darkgreen', 'threshold.thickness': 0.1},
-            delta = {'reference':50, 'increasing.color':'red', 'decreasing.color':'green' },
-            value = prediction_num,
+            gauge = {'axis': {'visible': False}, 'bar.color': '#FD5656' if classe_predite == 1 else '#60FD93', 'threshold.thickness': 0.1},
+            delta = {'reference':50, 'increasing.color':'red', 'decreasing.color':'green' }, #'valueformat':'.2%'
+            value = prediction_num_percent,
             #domain = {'x': [0.1, 1], 'y': [0.2, 0.9]},
             domain = {'row': 0, 'column': 0},
             title = {'text':  message_resultat.format(etat, prediction), 'align': 'center', 'font_color': 'darkred' if classe_predite == 1 else 'darkgreen'},
-            number={'font_color': 'darkred' if classe_predite == 1 else 'darkgreen'}                    
+            number={'font_color': '#FD5656' if classe_predite == 1 else '#60FD93'} #'suffix':'%'                   
             ))
         
-
+            # darkred darkgreen
         st.plotly_chart(fig)
         
         #classe_reelle = dataframe[dataframe['SK_ID_CURR']==int(id_input)]['LABELS'].values[0]
